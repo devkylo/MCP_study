@@ -1,0 +1,153 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://kapi.kakao.com/v1/api/talk/friends",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        40,
+        420
+      ],
+      "id": "be82c870-2fe0-4554-b0d3-d12691b44c90",
+      "name": "Kakao uuid get HTTP Request",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "3PqVWRcp2B4H0w2k",
+          "name": "Kakao credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://kapi.kakao.com/v1/api/talk/friends/message/default/send",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded;charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template_object",
+              "value": "={     \n  \"object_type\": \"text\",     \n  \"text\": \"메세지를 테스트 합니다.\",\n  \"link\": {\n        \"web_url\": \"https://developers.kakao.com\"\n    }\n}"
+            },
+            {
+              "name": "receiver_uuids",
+              "value": "[\"xxxx\"]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        40,
+        220
+      ],
+      "id": "9d4edaa7-1bd3-421b-af0a-d07ed1213fd5",
+      "name": "KaKao Friends HTTP Request",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "3PqVWRcp2B4H0w2k",
+          "name": "Kakao credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "text"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -300,
+        0
+      ],
+      "id": "afbacfa1-b48f-4bd3-b0bf-4b98e4c96b3e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://kapi.kakao.com/v2/api/talk/memo/default/send",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded;charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template_object",
+              "value": "={     \n  \"object_type\": \"text\",     \n  \"text\": \"{{ $json.text.replaceAll(\"\\n\", \"\\\\n\") }}\",\n  \"link\": {\n        \"web_url\": \"https://developers.kakao.com\"\n    }\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        40,
+        0
+      ],
+      "id": "9ede5c16-4a06-41e9-9957-7051214d7019",
+      "name": "My Kakao HTTP Request",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "3PqVWRcp2B4H0w2k",
+          "name": "Kakao credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "KaKao Friends HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "My Kakao HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  }
+}
